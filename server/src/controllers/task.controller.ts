@@ -48,6 +48,36 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
     });
   }
 };
+
+export const getTask = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const task = await Task.findOne({
+      _id: id,
+      user: req.user!.id,
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      task,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 export const updateTask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
