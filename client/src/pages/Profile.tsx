@@ -5,6 +5,7 @@ import { getProfile } from "../services/profile.service";
 
 function Profile() {
   const [user, setUser] = useState<any>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
@@ -35,7 +36,7 @@ function Profile() {
             <div className="-mt-16 flex flex-col items-center">
               {user?.avatar ? (
                 <img
-                  src={`http://localhost:5000${user.avatar}`}
+                  src={`${API_URL}${user.avatar}`}
                   alt={user.name}
                   className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
                 />

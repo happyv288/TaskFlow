@@ -11,6 +11,7 @@ function Navbar() {
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "null");
+  const API_URL = import.meta.env.VITE_API_URL;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -66,9 +67,9 @@ function Navbar() {
                 >
                   {user?.avatar ? (
                     <img
-                      src={`http://localhost:5000${user.avatar}`}
+                      src={`${API_URL}${user.avatar}`}
                       alt={user.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-700"
+                      className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center">
