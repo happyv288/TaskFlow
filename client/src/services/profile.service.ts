@@ -20,6 +20,7 @@ export const updateProfile = async (profileData: {
 
   return response.data;
 };
+
 export const uploadAvatar = async (file: File) => {
   const formData = new FormData();
 
@@ -27,7 +28,7 @@ export const uploadAvatar = async (file: File) => {
 
   const response = await api.put("/auth/avatar", formData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      ...getAuthHeader().headers,
       "Content-Type": "multipart/form-data",
     },
   });

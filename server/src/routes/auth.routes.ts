@@ -36,14 +36,15 @@ router.put("/reset-password/:token", resetPassword);
 
 // Profile
 router.get("/profile", protect, getProfile);
-
 router.put("/profile", protect, updateProfile);
 
 // Upload Avatar
 router.put("/avatar", protect, upload.single("avatar"), uploadAvatar);
-// Change password
+
+// Change Password
 router.put("/change-password", protect, changePassword);
-//  Delete Account
+
+// Delete Account
 router.delete("/delete-account", protect, deleteAccount);
 
 export default router;

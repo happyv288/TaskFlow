@@ -3,9 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/profile.service";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: string;
+}
+
 function Profile() {
-  const [user, setUser] = useState<any>(null);
-  const API_URL = import.meta.env.VITE_API_URL;
+  const [user, setUser] = useState<User | null>(null);
 
   const navigate = useNavigate();
 
@@ -13,7 +20,11 @@ function Profile() {
     const fetchProfile = async () => {
       try {
         const data = await getProfile();
+
         setUser(data.user);
+
+        // Keep Navbar updated
+        localStorage.setItem("user", JSON.stringify(data.user));
       } catch (error) {
         console.error(error);
       }
@@ -21,6 +32,12 @@ function Profile() {
 
     fetchProfile();
   }, []);
+
+  const avatar =
+    user?.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      user?.name || "User",
+    )}&background=2563eb&color=fff`;
 
   return (
     <>
@@ -34,17 +51,11 @@ function Profile() {
           {/* Profile */}
           <div className="px-8 pb-8">
             <div className="-mt-16 flex flex-col items-center">
-              {user?.avatar ? (
-                <img
-                  src={`${API_URL}${user.avatar}`}
-                  alt={user.name}
-                  className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
-                />
-              ) : (
-                <div className="w-28 h-28 rounded-full bg-white dark:bg-gray-700 border-4 border-white dark:border-gray-800 shadow-lg flex items-center justify-center text-4xl font-bold text-blue-600">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <img
+                src={avatar}
+                alt={user?.name || "Avatar"}
+                className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+              />
 
               <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-white">
                 {user?.name}

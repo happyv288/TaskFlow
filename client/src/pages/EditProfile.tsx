@@ -57,14 +57,15 @@ function EditProfile() {
 
     setSelectedFile(file);
 
+    // Show preview immediately
     const reader = new FileReader();
+
     reader.onloadend = () => {
       setPreview(reader.result as string);
     };
+
     reader.readAsDataURL(file);
   };
-
-  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,12 +73,15 @@ function EditProfile() {
     setSaving(true);
 
     try {
+      // Update profile details
       await updateProfile(formData);
 
+      // Upload avatar if selected
       if (selectedFile) {
         await uploadAvatar(selectedFile);
       }
 
+      // Fetch updated profile from server
       const updatedProfile = await getProfile();
 
       localStorage.setItem("user", JSON.stringify(updatedProfile.user));
@@ -97,34 +101,32 @@ function EditProfile() {
     return (
       <>
         <Navbar />
-        <div className="flex justify-center items-center h-[70vh] bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+        <div className="flex justify-center items-center h-[70vh] bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
           Loading...
         </div>
       </>
     );
   }
 
+  const avatar =
+    preview ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      formData.name || "User",
+    )}&background=2563eb&color=fff`;
+
   return (
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 px-4 py-6 sm:py-10">
-        <div className="w-full max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 sm:p-8 transition-colors duration-300">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center sm:text-left text-gray-900 dark:text-white">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8">
+        <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+          <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
             Edit Profile
           </h1>
 
-          <div className="flex flex-col items-center mb-6">
+          <div className="flex flex-col items-center mb-8">
             <img
-              src={
-                preview
-                  ? preview.startsWith("http") ||
-                    preview.startsWith("data:") ||
-                    preview.startsWith("blob:")
-                    ? preview
-                    : `${API_URL}${preview}`
-                  : "https://ui-avatars.com/api/?name=User&background=2563eb&color=fff"
-              }
+              src={avatar}
               alt="Avatar"
               className="w-28 h-28 rounded-full object-cover border-4 border-blue-500"
             />
@@ -133,13 +135,13 @@ function EditProfile() {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="mt-4 text-gray-900 dark:text-white file:bg-blue-600 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-lg file:cursor-pointer"
+              className="mt-4 file:bg-blue-600 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-lg file:cursor-pointer text-gray-900 dark:text-white"
             />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block mb-2 font-medium text-sm sm:text-base text-gray-900 dark:text-white">
+              <label className="block mb-2 font-medium text-gray-900 dark:text-white">
                 Name
               </label>
 
@@ -148,12 +150,12 @@ function EditProfile() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-400 rounded-lg p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-medium text-sm sm:text-base text-gray-900 dark:text-white">
+              <label className="block mb-2 font-medium text-gray-900 dark:text-white">
                 Email
               </label>
 
@@ -162,11 +164,12 @@ function EditProfile() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-400 rounded-lg p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <button
+              type="submit"
               disabled={saving}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-lg font-medium transition"
             >

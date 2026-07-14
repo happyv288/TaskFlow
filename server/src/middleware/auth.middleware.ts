@@ -11,33 +11,34 @@ export interface AuthRequest extends Request {
 export const protect = (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): void => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
-        message: "Unauthorized",
+        message: "Not authorized",
       });
+      return;
     }
 
     const token = authHeader.split(" ")[1];
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       id: string;
       role: string;
     };
 
-    req.user = decoded;
+    req.user = {
+      id: decoded.id,
+      role: decoded.role,
+    };
 
     next();
   } catch (error) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       message: "Invalid token",
     });

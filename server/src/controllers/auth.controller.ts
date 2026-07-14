@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/Users.js";
-import { AuthRequest } from "../middleware/auth.middleware.js";
 import crypto from "crypto";
-import Task from "../models/Task.js";
 
+import User from "../models/Users.js";
+import Task from "../models/Task.js";
+import { AuthRequest } from "../middleware/auth.middleware.js";
+
+// =========================
+// Register
+// =========================
 export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
@@ -47,11 +51,14 @@ export const register = async (req: Request, res: Response) => {
     });
   }
 };
+
+// =========================
+// Login
+// =========================
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -61,7 +68,6 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -71,7 +77,6 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       {
         id: user._id,
@@ -96,6 +101,8 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -103,6 +110,9 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+// =========================
+// Get Profile
+// =========================
 export const getProfile = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user!.id).select("-password");
@@ -119,6 +129,8 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
       user,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -126,6 +138,9 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// =========================
+// Update Profile
+// =========================
 export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
     const { name, email } = req.body;
@@ -156,34 +171,40 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       },
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       success: false,
       message: "Server Error",
     });
   }
 };
+
+// =========================
+// Upload Avatar (Local Uploads)
+// =========================
 export const uploadAvatar = async (req: AuthRequest, res: Response) => {
   try {
-    console.log(req.file);
     const user = await User.findById(req.user!.id);
 
     if (!user) {
-      res.status(404).json({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
-      return;
     }
 
     if (!req.file) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Please upload an image",
       });
-      return;
     }
 
-    user.avatar = `/uploads/${req.file.filename}`;
+    console.log("FILE:", req.file);
+
+    // Save the Cloudinary URL
+    user.avatar = (req.file as Express.Multer.File & { path: string }).path;
 
     await user.save();
 
@@ -207,6 +228,10 @@ export const uploadAvatar = async (req: AuthRequest, res: Response) => {
     });
   }
 };
+
+// =========================
+// Forgot Password
+// =========================
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -223,7 +248,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 30); // 30 minutes
+    user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 30);
 
     await user.save();
 
@@ -241,6 +266,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
   }
 };
+
+// =========================
+// Reset Password
+// =========================
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
@@ -248,7 +277,9 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: new Date() },
+      resetPasswordExpires: {
+        $gt: new Date(),
+      },
     });
 
     if (!user) {
@@ -258,9 +289,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    user.password = hashedPassword;
+    user.password = await bcrypt.hash(password, 10);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
 
@@ -279,6 +308,10 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   }
 };
+
+// =========================
+// Change Password
+// =========================
 export const changePassword = async (req: AuthRequest, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -292,7 +325,6 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Check current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
@@ -302,7 +334,6 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Hash new password
     user.password = await bcrypt.hash(newPassword, 10);
 
     await user.save();
@@ -320,10 +351,11 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
     });
   }
 };
-export const deleteAccount = async (
-  req: AuthRequest,
-  res: Response,
-) => {
+
+// =========================
+// Delete Account
+// =========================
+export const deleteAccount = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user!.id);
 
@@ -334,12 +366,10 @@ export const deleteAccount = async (
       });
     }
 
-    // Delete all tasks belonging to the user
     await Task.deleteMany({
       user: req.user!.id,
     });
 
-    // Delete the user
     await User.findByIdAndDelete(req.user!.id);
 
     res.status(200).json({

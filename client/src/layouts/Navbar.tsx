@@ -6,14 +6,22 @@ import { useTheme } from "../contexts/ThemeContext";
 
 function Navbar() {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "null");
-  const API_URL = import.meta.env.VITE_API_URL;
+
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   const { theme, toggleTheme } = useTheme();
+
+  const avatar =
+    user?.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      user?.name || "User",
+    )}&background=2563eb&color=fff`;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -50,7 +58,7 @@ function Navbar() {
             <Link to="/">TaskFlow</Link>
           </h1>
 
-          {/* Desktop Menu */}
+          {/* Desktop */}
           <div className="hidden md:flex items-center gap-6">
             <button
               onClick={toggleTheme}
@@ -65,29 +73,15 @@ function Navbar() {
                   onClick={() => setIsOpen(!isOpen)}
                   className="flex items-center gap-3"
                 >
-                  {user?.avatar ? (
-                    <img
-                      src={
-                        user?.avatar
-                          ? `${API_URL}${user.avatar}`
-                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              user?.name || "User",
-                            )}&background=2563eb&color=fff`
-                      }
-                      alt={user?.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-800"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <img
+                    src={avatar}
+                    alt={user?.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-700"
+                  />
 
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {user?.name}
-                    </p>
-                  </div>
+                  <p className="font-semibold text-gray-900 dark:text-white">
+                    {user?.name}
+                  </p>
                 </button>
 
                 {isOpen && (
@@ -105,7 +99,7 @@ function Navbar() {
                     <Link
                       to="/"
                       onClick={() => setIsOpen(false)}
-                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       🏠 Dashboard
                     </Link>
@@ -113,7 +107,7 @@ function Navbar() {
                     <Link
                       to="/profile"
                       onClick={() => setIsOpen(false)}
-                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       👤 Profile
                     </Link>
@@ -121,7 +115,7 @@ function Navbar() {
                     <Link
                       to="/settings"
                       onClick={() => setIsOpen(false)}
-                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                      className="block px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       ⚙️ Settings
                     </Link>
@@ -131,7 +125,7 @@ function Navbar() {
                         setIsOpen(false);
                         handleLogout();
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition"
+                      className="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600"
                     >
                       🚪 Logout
                     </button>
@@ -157,7 +151,7 @@ function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Button */}
           <button
             className="md:hidden text-gray-900 dark:text-white"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -168,10 +162,10 @@ function Navbar() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="md:hidden bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700 px-4 py-4 space-y-4 transition-colors duration-300">
+          <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-4 py-4 space-y-4">
             <button
               onClick={toggleTheme}
-              className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
@@ -179,19 +173,11 @@ function Navbar() {
             {token ? (
               <>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-700">
-                    <img
-                      src={
-                        user?.avatar
-                          ? `http://localhost:5000${user.avatar}`
-                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              user?.name || "User",
-                            )}&background=2563eb&color=fff`
-                      }
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <img
+                    src={avatar}
+                    alt={user?.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-700"
+                  />
 
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">
@@ -233,28 +219,15 @@ function Navbar() {
                     setMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  onClick={() => setMenuOpen(false)}
-                  className="block"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  to="/register"
-                  onClick={() => setMenuOpen(false)}
-                  className="block"
-                >
-                  Register
-                </Link>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
               </>
             )}
           </div>
