@@ -12,9 +12,9 @@ import TaskCard from "../components/TaskCard";
 import Swal from "sweetalert2";
 import TaskChart from "../components/TaskChart";
 import KanbanBoard from "../components/KanbanBoard";
-import { FaCalendarAlt, FaEdit, FaTrash, FaFlag } from "react-icons/fa";
+import { FaFlag } from "react-icons/fa";
 
-import { MdCategory, MdDone } from "react-icons/md";
+import { MdCategory } from "react-icons/md";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 type Task = {
@@ -481,7 +481,7 @@ function Dashboard() {
 
             <Link
               to="/create-task"
-               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
             >
               + Create Your First Task
             </Link>
