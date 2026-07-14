@@ -67,9 +67,15 @@ function Navbar() {
                 >
                   {user?.avatar ? (
                     <img
-                      src={`${API_URL}${user.avatar}`}
-                      alt={user.name}
-                      className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                      src={
+                        user?.avatar
+                          ? `${API_URL}${user.avatar}`
+                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              user?.name || "User",
+                            )}&background=2563eb&color=fff`
+                      }
+                      alt={user?.name}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-800"
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center">

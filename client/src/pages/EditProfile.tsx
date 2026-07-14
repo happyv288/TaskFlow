@@ -31,9 +31,7 @@ function EditProfile() {
           email: data.user.email,
         });
 
-        setPreview(
-          data.user.avatar ? `http://localhost:5000${data.user.avatar}` : "",
-        );
+        setPreview(data.user.avatar || "");
       } catch (error) {
         console.error(error);
         toast.error("Failed to load profile");
@@ -59,8 +57,14 @@ function EditProfile() {
 
     setSelectedFile(file);
 
-    setPreview(URL.createObjectURL(file));
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,8 +117,13 @@ function EditProfile() {
           <div className="flex flex-col items-center mb-6">
             <img
               src={
-                preview ||
-                "https://ui-avatars.com/api/?name=User&background=2563eb&color=fff"
+                preview
+                  ? preview.startsWith("http") ||
+                    preview.startsWith("data:") ||
+                    preview.startsWith("blob:")
+                    ? preview
+                    : `${API_URL}${preview}`
+                  : "https://ui-avatars.com/api/?name=User&background=2563eb&color=fff"
               }
               alt="Avatar"
               className="w-28 h-28 rounded-full object-cover border-4 border-blue-500"
