@@ -1,52 +1,171 @@
 import { useNavigate } from "react-router-dom";
+import { FaCalendarAlt, FaEdit, FaTrash, FaFlag } from "react-icons/fa";
+import { MdCategory, MdDone } from "react-icons/md";
+
 type Task = {
   _id: string;
   title: string;
   description: string;
   priority: string;
   status: string;
+  category: string;
   dueDate?: string;
 };
 
 type TaskCardProps = {
   task: Task;
   onDelete: (id: string) => void;
+  onStatusChange: (id: string, status: string) => void;
 };
 
-function TaskCard({ task, onDelete }: TaskCardProps) {
+function TaskCard({ task, onDelete, onStatusChange }: TaskCardProps) {
   const navigate = useNavigate();
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onStatusChange(task._id, e.target.value);
+  };
+
+  const priorityColor = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case "high":
+        return "bg-red-100 text-red-700";
+      case "medium":
+        return "bg-yellow-100 text-yellow-700";
+      case "low":
+        return "bg-green-100 text-green-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const isOverdue =
+    task.dueDate &&
+    new Date(task.dueDate) < new Date() &&
+    task.status !== "done";
+
+  const getDueStatus = () => {
+    if (!task.dueDate) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const due = new Date(task.dueDate);
+    due.setHours(0, 0, 0, 0);
+
+    const diff = (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (diff < 0)
+      return {
+        text: "Overdue",
+        color: "bg-red-100 text-red-600",
+      };
+
+    if (diff === 0)
+      return {
+        text: "Due Today",
+        color: "bg-orange-100 text-orange-600",
+      };
+
+    if (diff === 1)
+      return {
+        text: "Due Tomorrow",
+        color: "bg-yellow-100 text-yellow-700",
+      };
+
+    return {
+      text: `${diff} day${diff > 1 ? "s" : ""} left`,
+      color: "bg-green-100 text-green-600",
+    };
+  };
+
+  const dueStatus = getDueStatus();
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-4">
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-xl font-bold">{task.title}</h2>
+    <div
+      className={`${
+        isOverdue ? "bg-red-50 dark:bg-red-950" : "bg-white dark:bg-gray-800"
+      } rounded-xl shadow p-6 border-l-4 transition-colors ${
+        isOverdue
+          ? "border-red-600"
+          : task.priority === "high"
+            ? "border-red-500"
+            : task.priority === "medium"
+              ? "border-yellow-500"
+              : "border-green-500"
+      }`}
+    >
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-5">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            {task.title}
+          </h2>
 
-          <p className="text-gray-600 mt-2">{task.description}</p>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
+            {task.description}
+          </p>
 
-          <div className="flex gap-4 mt-4 text-sm">
-            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
-              {task.priority}
+          <div className="flex flex-wrap items-center gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
+            <span
+              className={`${priorityColor(
+                task.priority,
+              )} px-3 py-1 rounded-full font-medium flex items-center gap-2`}
+            >
+              <FaFlag className="text-red-500" />
+              <span>{task.priority}</span>
             </span>
 
-            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-              {task.status}
+            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium flex items-center gap-2">
+              <MdCategory className="text-purple-600" />
+              <span>{task.category}</span>
             </span>
+
+            <div className="flex items-center gap-2">
+              <MdDone className="text-green-600" />
+
+              <select
+                value={task.status}
+                onChange={handleStatusChange}
+                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-1 text-sm"
+              >
+                <option value="todo">Todo</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+
+            {dueStatus && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <FaCalendarAlt className="text-blue-600" />
+
+                <span>
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "No due date"}
+                </span>
+              </div>
+            )}
+
+            {isOverdue && (
+              <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                ⏰ Overdue
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-row gap-2 w-full md:w-auto md:justify-end">
           <button
             onClick={() => navigate(`/edit-task/${task._id}`)}
-            className="bg-yellow-500 text-white px-3 py-2 rounded-lg"
+            className="flex-1 md:flex-none p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 transition"
           >
-            Edit
+            <FaEdit className="mx-auto text-blue-600 dark:text-blue-300" />
           </button>
 
           <button
             onClick={() => onDelete(task._id)}
-            className="bg-red-600 text-white px-3 py-2 rounded-lg"
+            className="flex-1 md:flex-none p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 transition"
           >
-            Delete
+            <FaTrash className="mx-auto text-red-600 dark:text-red-300" />
           </button>
         </div>
       </div>

@@ -1,6 +1,18 @@
 import { Router } from "express";
-import { register, login } from "../controllers/auth.controller.js";
+import {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  uploadAvatar,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+  deleteAccount,
+} from "../controllers/auth.controller.js";
+
 import { protect } from "../middleware/auth.middleware.js";
+import upload from "../middleware/upload.middleware.js";
 
 const router = Router();
 
@@ -12,16 +24,26 @@ router.get("/", (req, res) => {
   });
 });
 
-// Register Route
+// Register
 router.post("/register", register);
 
+// Login
 router.post("/login", login);
 
-router.get("/profile", protect, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome! This is a protected route.",
-  });
-});
+// Password Reset
+router.post("/forgot-password", forgotPassword);
+router.put("/reset-password/:token", resetPassword);
+
+// Profile
+router.get("/profile", protect, getProfile);
+
+router.put("/profile", protect, updateProfile);
+
+// Upload Avatar
+router.put("/avatar", protect, upload.single("avatar"), uploadAvatar);
+// Change password
+router.put("/change-password", protect, changePassword);
+//  Delete Account
+router.delete("/delete-account", protect, deleteAccount);
 
 export default router;

@@ -15,12 +15,14 @@ export const createTask = async (taskData: {
   title: string;
   description: string;
   priority: string;
+  category: string;
   dueDate: string;
 }) => {
   const response = await api.post("/tasks", taskData, getAuthHeader());
 
   return response.data;
 };
+
 export const deleteTask = async (id: string) => {
   const token = localStorage.getItem("token");
 
@@ -39,10 +41,22 @@ export const updateTask = async (
     title: string;
     description: string;
     priority: string;
+    category: string;
     dueDate: string;
+    status?: string;
   },
 ) => {
   const response = await api.put(`/tasks/${id}`, taskData, getAuthHeader());
+
+  return response.data;
+};
+export const reorderTasks = async (
+  tasks: {
+    id: string;
+    order: number;
+  }[],
+) => {
+  const response = await api.put("/tasks/reorder", { tasks }, getAuthHeader());
 
   return response.data;
 };

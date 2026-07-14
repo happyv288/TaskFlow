@@ -4,13 +4,16 @@ import { AuthRequest } from "../middleware/auth.middleware.js";
 
 export const createTask = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, priority, dueDate } = req.body;
+    const { title, description, priority, category, dueDate, status } =
+      req.body;
 
     const task = await Task.create({
       title,
       description,
       priority,
+      category,
       dueDate,
+      status,
       user: req.user!.id,
     });
 
@@ -28,11 +31,10 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     });
   }
 };
+
 export const getTasks = async (req: AuthRequest, res: Response) => {
   try {
-    const tasks = await Task.find({
-      user: req.user!.id,
-    });
+    const tasks = await Task.find({ user: req.user!.id }).sort({ order: 1 });
 
     res.status(200).json({
       success: true,
@@ -78,6 +80,7 @@ export const getTask = async (req: AuthRequest, res: Response) => {
     });
   }
 };
+
 export const updateTask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -115,6 +118,7 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
     });
   }
 };
+
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -138,6 +142,27 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     console.error(error);
 
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+export const reorderTasks = async (req: AuthRequest, res: Response) => {
+  try {
+    const { tasks } = req.body;
+
+    for (const task of tasks) {
+      await Task.findByIdAndUpdate(task.id, {
+        order: task.order,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Tasks reordered",
+    });
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
