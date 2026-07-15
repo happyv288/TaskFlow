@@ -10,8 +10,12 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user") || "null",
+  );
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -24,14 +28,20 @@ function Navbar() {
     )}&background=2563eb&color=fff`;
 
   const handleLogout = () => {
+    // Remove all authentication data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    sessionStorage.clear();
 
     toast.success("Logged out successfully!");
 
-    navigate("/login");
-  };
+    // Prevent returning to protected pages with the Back button
+    navigate("/login", { replace: true });
 
+    // Close any open menus
+    setMenuOpen(false);
+    setIsOpen(false);
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (

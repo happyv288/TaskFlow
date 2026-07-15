@@ -33,10 +33,17 @@ function Profile() {
     fetchProfile();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login", { replace: true });
+  };
+
   const avatar =
     user?.avatar ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      user?.name || "User",
+      user?.name || "User"
     )}&background=2563eb&color=fff`;
 
   return (
@@ -61,7 +68,9 @@ function Profile() {
                 {user?.name}
               </h1>
 
-              <p className="text-gray-500 dark:text-gray-400">{user?.email}</p>
+              <p className="text-gray-500 dark:text-gray-400">
+                {user?.email}
+              </p>
             </div>
 
             <div className="mt-10 space-y-6">
@@ -95,12 +104,21 @@ function Profile() {
                 </span>
               </div>
 
-              <button
-                onClick={() => navigate("/profile/edit")}
-                className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
-              >
-                Edit Profile
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                <button
+                  onClick={() => navigate("/profile/edit")}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+                >
+                  Edit Profile
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>
