@@ -3,7 +3,7 @@ import Navbar from "../layouts/Navbar";
 import type { DropResult } from "@hello-pangea/dnd";
 
 import { Link } from "react-router-dom";
-import StatsCards from "../components/StatsCards";
+
 import {
   getTasks,
   deleteTask,
