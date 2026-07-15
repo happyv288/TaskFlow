@@ -2,6 +2,7 @@ import Navbar from "../layouts/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/profile.service";
+import { FaArrowLeft } from "react-icons/fa6";
 
 interface User {
   id: string;
@@ -24,7 +25,11 @@ function Profile() {
         setUser(data.user);
 
         // Keep Navbar updated
-        localStorage.setItem("user", JSON.stringify(data.user));
+        if (localStorage.getItem("token")) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } else {
+          sessionStorage.setItem("user", JSON.stringify(data.user));
+        }
       } catch (error) {
         console.error(error);
       }
@@ -43,7 +48,7 @@ function Profile() {
   const avatar =
     user?.avatar ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      user?.name || "User"
+      user?.name || "User",
     )}&background=2563eb&color=fff`;
 
   return (
@@ -51,6 +56,13 @@ function Profile() {
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 py-10 px-4">
+        <button
+    onClick={() => navigate(-1)}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+  >
+    <FaArrowLeft />
+    <span>Back</span>
+  </button>
         <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition-colors duration-300">
           {/* Header */}
           <div className="bg-blue-600 h-32"></div>
@@ -68,9 +80,7 @@ function Profile() {
                 {user?.name}
               </h1>
 
-              <p className="text-gray-500 dark:text-gray-400">
-                {user?.email}
-              </p>
+              <p className="text-gray-500 dark:text-gray-400">{user?.email}</p>
             </div>
 
             <div className="mt-10 space-y-6">

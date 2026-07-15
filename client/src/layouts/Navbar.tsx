@@ -28,19 +28,19 @@ function Navbar() {
     )}&background=2563eb&color=fff`;
 
   const handleLogout = () => {
-    // Remove all authentication data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    sessionStorage.clear();
+
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+
+    // Close menus before navigating
+    setMenuOpen(false);
+    setIsOpen(false);
 
     toast.success("Logged out successfully!");
 
-    // Prevent returning to protected pages with the Back button
     navigate("/login", { replace: true });
-
-    // Close any open menus
-    setMenuOpen(false);
-    setIsOpen(false);
   };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

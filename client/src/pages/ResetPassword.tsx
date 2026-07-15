@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -41,6 +42,7 @@ function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300 px-4">
+     
       <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md transition-colors">
         <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
           Reset Password
@@ -51,6 +53,13 @@ function ResetPassword() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+            <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+      >
+        <FaArrowLeft />
+        <span>Back</span>
+      </button>
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}

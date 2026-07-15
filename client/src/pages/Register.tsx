@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { registerUser } from "../services/auth.service";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import axios from "axios";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function Register() {
   const navigate = useNavigate();
@@ -67,7 +69,12 @@ function Register() {
       navigate("/login");
     } catch (error) {
       console.error(error);
-      toast.error("Registration failed.");
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Registration failed.");
+      } else {
+        toast.error("Something went wrong.");
+      }
     }
   };
 
@@ -77,6 +84,13 @@ function Register() {
         onSubmit={handleSubmit}
         className="bg-white dark:bg-gray-800 w-full max-w-md rounded-xl shadow-lg p-6 sm:p-8 transition-colors"
       >
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+        >
+          <FaArrowLeft />
+          <span>Back</span>
+        </button>
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
           Create Account
         </h1>

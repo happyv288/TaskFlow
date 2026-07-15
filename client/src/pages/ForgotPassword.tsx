@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function ForgotPassword() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetLink, setResetLink] = useState("");
@@ -30,7 +32,9 @@ function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300 px-4">
+     
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 transition-colors duration-300">
+        
         <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
           Forgot Password
         </h1>
@@ -40,6 +44,7 @@ function ForgotPassword() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          
           <input
             type="email"
             required

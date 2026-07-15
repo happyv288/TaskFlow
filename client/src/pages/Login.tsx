@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { loginUser } from "../services/auth.service";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import axios from "axios";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function Login() {
   const navigate = useNavigate();
@@ -55,24 +57,47 @@ function Login() {
     try {
       const data = await loginUser(formData);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      if (rememberMe) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      } else {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+      }
 
       toast.success(`Welcome back, ${data.user.name}!`);
 
       navigate("/");
     } catch (error) {
       console.error(error);
-      toast.error("Invalid email or password.");
+
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Login failed. Please try again.",
+        );
+      } else {
+        toast.error("Something went wrong.");
+      }
     }
   };
 
   return (
+    
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300 px-4 py-8">
+      
+      
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 shadow-lg p-6 sm:p-8 transition-colors duration-300"
       >
+         <button
+    onClick={() => navigate(-1)}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+  >
+    <FaArrowLeft />
+    <span>Back</span>
+  </button>
+        
         <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
           Welcome Back
         </h1>

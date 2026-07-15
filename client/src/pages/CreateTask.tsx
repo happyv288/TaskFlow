@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createTask, updateTask } from "../services/task.service";
 import toast from "react-hot-toast";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function CreateTask() {
   const navigate = useNavigate();
@@ -78,6 +79,13 @@ function CreateTask() {
         onSubmit={handleSubmit}
         className="w-full max-w-lg rounded-xl bg-white dark:bg-gray-800 shadow-lg p-5 sm:p-8 transition-colors duration-300"
       >
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+        >
+          <FaArrowLeft />
+          <span>Back</span>
+        </button>
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
           {id ? "Edit Task" : "Create Task"}
         </h1>

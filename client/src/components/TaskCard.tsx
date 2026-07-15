@@ -94,80 +94,100 @@ function TaskCard({ task, onDelete, onStatusChange }: TaskCardProps) {
               : "border-green-500"
       }`}
     >
-      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-5">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+      <div className="flex justify-between items-start gap-4">
+        {/* LEFT SIDE */}
+        <div className="flex-1 min-w-0">
+          <h2 className="text-left text-xl font-bold text-gray-900 dark:text-white break-words">
             {task.title}
           </h2>
 
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="mt-2 text-left text-gray-600 dark:text-gray-300 break-words">
             {task.description}
           </p>
-
-          <div className="flex flex-wrap items-center gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
-            <span
-              className={`${priorityColor(
-                task.priority,
-              )} px-3 py-1 rounded-full font-medium flex items-center gap-2`}
-            >
-              <FaFlag className="text-red-500" />
-              <span>{task.priority}</span>
-            </span>
-
-            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-medium flex items-center gap-2">
-              <MdCategory className="text-purple-600" />
-              <span>{task.category}</span>
-            </span>
-
-            <div className="flex items-center gap-2">
-              <MdDone className="text-green-600" />
-
-              <select
-                value={task.status}
-                onChange={handleStatusChange}
-                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-1 text-sm"
-              >
-                <option value="todo">Todo</option>
-                <option value="in-progress">In Progress</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
-
-            {dueStatus && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <FaCalendarAlt className="text-blue-600" />
-
-                <span>
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleDateString()
-                    : "No due date"}
-                </span>
-              </div>
-            )}
-
-            {isOverdue && (
-              <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
-                ⏰ Overdue
-              </span>
-            )}
-          </div>
         </div>
 
-        <div className="flex flex-row gap-2 w-full md:w-auto md:justify-end">
+        <div className="flex gap-2 shrink-0">
           <button
+            type="button"
+            aria-label="Edit task"
             onClick={() => navigate(`/edit-task/${task._id}`)}
-            className="flex-1 md:flex-none p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 transition"
+            className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 transition"
           >
-            <FaEdit className="mx-auto text-blue-600 dark:text-blue-300" />
+            <FaEdit className="text-blue-600 dark:text-blue-300" />
           </button>
 
           <button
+            type="button"
+            aria-label="Delete task"
             onClick={() => onDelete(task._id)}
-            className="flex-1 md:flex-none p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 transition"
+            className="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 transition"
           >
-            <FaTrash className="mx-auto text-red-600 dark:text-red-300" />
+            <FaTrash className="text-red-600 dark:text-red-300" />
           </button>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        {/* Priority */}
+        <span
+          className={`${priorityColor(
+            task.priority,
+          )} px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium`}
+        >
+          <FaFlag className="text-red-500" />
+          {task.priority}
+        </span>
+
+        {/* Category */}
+        <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full flex items-center gap-2 text-sm font-medium">
+          <MdCategory className="text-purple-600" />
+          {task.category}
+        </span>
+
+        {/* Status */}
+        <div className="flex items-center gap-2">
+          <MdDone className="text-green-600" />
+
+          <select
+            value={task.status}
+            onChange={handleStatusChange}
+            className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-1 text-sm"
+          >
+            <option value="todo">Todo</option>
+            <option value="in-progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+
+        {/* Due Date */}
+        {dueStatus && (
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+            <FaCalendarAlt className="text-blue-600" />
+
+            <span>
+              {task.dueDate
+                ? new Date(task.dueDate).toLocaleDateString()
+                : "No due date"}
+            </span>
+          </div>
+        )}
+
+        {/* Due Status */}
+        {dueStatus && (
+          <span
+            className={`${dueStatus.color} px-3 py-1 rounded-full text-xs font-semibold`}
+          >
+            {dueStatus.text}
+          </span>
+        )}
+
+        {/* Overdue */}
+        {isOverdue && (
+          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+            ⏰ Overdue
+          </span>
+        )}
       </div>
     </div>
   );

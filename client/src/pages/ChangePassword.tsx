@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import { FaEyeSlash } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -13,6 +15,7 @@ function ChangePassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +60,15 @@ function ChangePassword() {
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex justify-center items-center px-4">
+       
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-lg transition-colors duration-300">
+            <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+      >
+        <FaArrowLeft />
+        <span>Back</span>
+      </button>
           <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
             Change Password
           </h1>

@@ -8,6 +8,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { updateNotifications } from "../services/settings.service";
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/profile.service";
+import { FaArrowLeft } from "react-icons/fa6";
 
 function Settings() {
   const { theme, toggleTheme } = useTheme();
@@ -59,6 +60,13 @@ function Settings() {
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 py-10 px-4">
+         <button
+    onClick={() => navigate(-1)}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+  >
+    <FaArrowLeft />
+    <span>Back</span>
+  </button>
         <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 transition-colors">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
             ⚙️ Settings

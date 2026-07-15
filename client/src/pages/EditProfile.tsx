@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../layouts/Navbar";
+import { FaArrowLeft } from "react-icons/fa6";
+
 import {
   getProfile,
   updateProfile,
@@ -18,6 +20,7 @@ function EditProfile() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
 
@@ -101,6 +104,7 @@ function EditProfile() {
     return (
       <>
         <Navbar />
+
         <div className="flex justify-center items-center h-[70vh] bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
           Loading...
         </div>
@@ -119,7 +123,16 @@ function EditProfile() {
       <Navbar />
 
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8">
+        <button
+    onClick={() => navigate(-1)}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition mb-6"
+  >
+    <FaArrowLeft />
+    <span>Back</span>
+  </button>
+
         <div className="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+          
           <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
             Edit Profile
           </h1>

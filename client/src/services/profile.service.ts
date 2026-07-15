@@ -1,24 +1,29 @@
 import api from "../api/axios";
 
-const getAuthHeader = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+const getAuthHeader = () => {
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 export const getProfile = async () => {
-  const response = await api.get("/auth/profile", getAuthHeader());
+  const { data } = await api.get("/auth/profile", getAuthHeader());
 
-  return response.data;
+  return data;
 };
 
 export const updateProfile = async (profileData: {
   name: string;
   email: string;
 }) => {
-  const response = await api.put("/auth/profile", profileData, getAuthHeader());
+  const { data } = await api.put("/auth/profile", profileData, getAuthHeader());
 
-  return response.data;
+  return data;
 };
 
 export const uploadAvatar = async (file: File) => {
@@ -26,12 +31,12 @@ export const uploadAvatar = async (file: File) => {
 
   formData.append("avatar", file);
 
-  const response = await api.put("/auth/avatar", formData, {
+  const { data } = await api.put("/auth/avatar", formData, {
     headers: {
       ...getAuthHeader().headers,
       "Content-Type": "multipart/form-data",
     },
   });
 
-  return response.data;
+  return data;
 };

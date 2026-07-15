@@ -1,10 +1,15 @@
 import api from "../api/axios";
 
-const getAuthHeader = () => ({
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+const getAuthHeader = () => {
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 export const getTasks = async () => {
   const response = await api.get("/tasks", getAuthHeader());
@@ -24,7 +29,8 @@ export const createTask = async (taskData: {
 };
 
 export const deleteTask = async (id: string) => {
-  const token = localStorage.getItem("token");
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
 
   const response = await api.delete(`/tasks/${id}`, {
     headers: {
